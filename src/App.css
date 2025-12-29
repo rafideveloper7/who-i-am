@@ -1,0 +1,73 @@
+/* Elegant Green Circle Cursor Effect */
+* {
+  cursor: none;
+}
+
+.cursor-circle {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid rgb(12, 28, 255);
+  box-shadow: 
+    0 0 20px rgb(0, 89, 255),
+    inset 0 0 20px rgb(0, 60, 255);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: 
+    width 0.2s ease,
+    height 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  backdrop-filter: blur(1px);
+}
+
+.cursor-circle.hover {
+  border-color: rgba(72, 255, 0, 0.8);
+  box-shadow: 
+    0 0 30px rgba(72, 255, 0, 0.6),
+    inset 0 0 30px rgba(72, 255, 0, 0.3);
+  width: 120px;
+  height: 120px;
+}
+
+.cursor-circle.click {
+  animation: circlePulse 0.3s ease;
+}
+
+@keyframes circlePulse {
+  0% { 
+    transform: translate(-50%, -50%) scale(1);
+    border-color: rgba(72, 255, 0, 1);
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.2);
+    border-color: rgba(72, 255, 0, 0.4);
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(1);
+    border-color: rgba(72, 255, 0, 0.6);
+  }
+}
+
+/* Keep default cursor for form elements */
+input, textarea, select, button, [contenteditable] {
+  cursor: auto !important;
+}
+
+/* Ensure links and buttons work properly */
+a, button {
+  position: relative;
+  z-index: 10000;
+}
+
+/* Remove cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .cursor-circle {
+    display: none;
+  }
+  * {
+    cursor: auto;
+  }
+}
