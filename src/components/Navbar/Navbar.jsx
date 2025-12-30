@@ -19,7 +19,7 @@ function Navbar() {
   const externalLinks = [
     { name: 'Github', url: 'https://github.com/rafideveloper7', icon: '⟨/⟩' },
     { name: 'LinkedIn', url: 'https://www.linkedin.com/in/rafideveloper7', icon: '⧉' },
-    { name: 'Resume', url: '/resume.pdf', icon: '📃' },
+    { name: 'Resume', url: '../../../public/assets/CV/cv.pdf', icon: '📃' },
   ];
 
   return (
