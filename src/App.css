@@ -1,54 +1,117 @@
-/* Elegant Green Circle Cursor Effect */
-* {
-  cursor: none;
-}
-
-.cursor-circle {
+/* Airplane Cursor with Smoke Trail - Updated Colors */
+.airplane-cursor {
+  width: 50px !important;
   position: fixed;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 2px solid rgb(12, 28, 255);
-  box-shadow: 
-    0 0 20px rgb(0, 89, 255),
-    inset 0 0 20px rgb(0, 60, 255);
   pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
+  z-index: 99999; /* Higher z-index to be on top of everything */
+  font-size: 40px;
+  line-height: z;
+  text-shadow: 
+    0 0 20px rgba(0, 38, 255, 0.9),
+    0 0 60px rgba(251, 255, 5, 0.7),
+    0 0 40px rgba(8, 33, 255, 0.8);
+  transform: translate(-50%, -50%) rotate(0deg);
   transition: 
-    width 0.2s ease,
-    height 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-  backdrop-filter: blur(1px);
+    transform 0.5s ease,
+    font-size 0.5s ease;
+  will-change: transform;
 }
 
-.cursor-circle.hover {
-  border-color: rgba(72, 255, 0, 0.8);
-  box-shadow: 
-    0 0 30px rgba(72, 255, 0, 0.6),
-    inset 0 0 30px rgba(72, 255, 0, 0.3);
-  width: 120px;
-  height: 120px;
+/* Smoke trail container */
+.smoke-trail {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  pointer-events: none;
+  z-index: 99998;
+  top: 0;
+  left: 0;
 }
 
-.cursor-circle.click {
-  animation: circlePulse 0.3s ease;
+/* Individual smoke particles */
+.smoke-particle {
+  position: absolute;
+  background: radial-gradient(circle, rgb(255, 255, 255), rgba(255, 255, 255, 0.103) 30%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: smokeFloat 2s ease-out forwards;
+  filter: blur(5px);
 }
 
-@keyframes circlePulse {
-  0% { 
-    transform: translate(-50%, -50%) scale(1);
-    border-color: rgba(72, 255, 0, 1);
+@keyframes smokeFloat {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0.8;
   }
-  50% { 
-    transform: translate(-50%, -50%) scale(1.2);
-    border-color: rgba(72, 255, 0, 0.4);
+  20% {
+    opacity: 0.9;
   }
-  100% { 
-    transform: translate(-50%, -50%) scale(1);
-    border-color: rgba(72, 255, 0, 0.6);
+  50% {
+    opacity: 0.4;
   }
+  100% {
+    transform: 
+      translate(var(--smoke-x, 0px), var(--smoke-y, 0px)) 
+      scale(var(--smoke-scale, 2));
+    opacity: 0;
+  }
+}
+
+/* Hover effects */
+.airplane-cursor.hover {
+  font-size: 50px;
+  text-shadow: 
+    0 0 25px rgba(0, 38, 255, 1),
+    0 0 65px rgba(251, 255, 5, 0.9),
+    0 0 45px rgba(8, 33, 255, 1);
+}
+
+.airplane-cursor.click {
+  animation: airplaneClick 0.3s ease;
+}
+
+@keyframes airplaneClick {
+  0%, 100% { transform: translate(-50%, -50%) rotate(var(--current-rotate, 0deg)) scale(1); }
+  50% { transform: translate(-50%, -50%) rotate(var(--current-rotate, 0deg)) scale(0.8); }
+}
+
+/* Movement direction classes */
+.airplane-cursor.moving-up {
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.airplane-cursor.moving-down {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.airplane-cursor.moving-left {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.airplane-cursor.moving-right {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+/* Diagonal directions */
+.airplane-cursor.moving-up-right {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.airplane-cursor.moving-up-left {
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.airplane-cursor.moving-down-right {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.airplane-cursor.moving-down-left {
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+
+/* Ensure airplane is on top of ALL elements */
+* {
+  cursor: none !important;
 }
 
 /* Keep default cursor for form elements */
@@ -56,18 +119,20 @@ input, textarea, select, button, [contenteditable] {
   cursor: auto !important;
 }
 
-/* Ensure links and buttons work properly */
-a, button {
-  position: relative;
-  z-index: 10000;
-}
-
-/* Remove cursor on touch devices */
+/* Hide on touch devices */
 @media (hover: none) and (pointer: coarse) {
-  .cursor-circle {
+  .airplane-cursor,
+  .smoke-trail {
     display: none;
   }
   * {
     cursor: auto;
   }
+}
+
+/* Additional global styles to ensure visibility */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }

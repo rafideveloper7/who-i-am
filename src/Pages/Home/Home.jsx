@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faLinkedin, faCodepen, faReact, faJs, faHtml5 } from '@fortawesome/free-brands-svg-icons';
 import { faTerminal, faCode, faServer, faShieldHalved, faRocket, faPalette, faMobileAlt, faBoltLightning, faUser, faEnvelope, faCalendar, faMapMarkerAlt, faGraduationCap, faBriefcase } from '@fortawesome/free-solid-svg-icons';
+import Contact from '../Contact/Contact';
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [typedText, setTypedText] = useState('');
@@ -47,25 +49,8 @@ function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute text-[#48ff00] animate-float text-sm md:text-base"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${Math.random() * 10 + 10}s`,
-              }}
-            >
-              {['</>', '{ }', '=>', '()', '[]'][i % 5]}
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="min-h-screen bg-black text-white overflow-x-hidden ">
+      
 
       <div className="relative z-10">
         {/* ==================== HERO SECTION ==================== */}
@@ -403,111 +388,27 @@ function Home() {
           </div>
         </section>
 
-        {/* ==================== CTA SECTION ==================== */}
-        <section className="py-12 md:py-20 border-t border-[#48ff00]/10">
-          <div className="w-full px-3 sm:px-4 md:px-6">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
-                READY TO <span className="text-[#48ff00]">BUILD</span>?
-              </h2>
-              
-              <p className="text-gray-400 text-sm sm:text-base md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto px-2">
-                Let's discuss your project and bring your ideas to life.
-              </p>
-              
-              <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 md:gap-6 justify-center">
-                <button className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-gradient-to-r from-[#48ff00] to-[#00ff41] text-black font-mono font-bold rounded-lg text-sm sm:text-base md:text-lg hover:shadow-[0_0_20px_rgba(72,255,0,0.3)] transition-all duration-300 hover:scale-105">
-                  START PROJECT
-                </button>
-                
-                <button className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 border-2 border-[#48ff00] text-[#48ff00] font-mono font-bold rounded-lg text-sm sm:text-base md:text-lg hover:bg-[#48ff00] hover:text-black transition-all duration-300 hover:scale-105">
-                  VIEW WORK
-                </button>
-              </div>
-              
-              <div className="mt-8 sm:mt-10 md:mt-12 flex justify-center gap-4 sm:gap-6 md:gap-8">
-                {[
-                  { icon: faGithub, label: 'GitHub' },
-                  { icon: faLinkedin, label: 'LinkedIn' },
-                  { icon: faCodepen, label: 'CodePen' },
-                ].map((social, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="group flex flex-col items-center text-gray-400 hover:text-[#48ff00] transition-colors duration-300"
-                  >
-                    <FontAwesomeIcon icon={social.icon} className="text-2xl sm:text-3xl mb-1 sm:mb-2" />
-                    <span className="font-mono text-xs sm:text-sm">{social.label}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+       {/* ==================== CTA SECTION ==================== */}
+<section className="py-12 md:py-20 border-t border-[#48ff00]/10">
+  <div className="w-full px-3 sm:px-4 md:px-6">
+    <div className="max-w-4xl m-auto text-center">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
+        READY TO <span className="text-[#48ff00]">BUILD</span>?
+      </h2>
+      
+      <p className="text-gray-400 text-sm sm:text-base md:text-xl mb-6 sm:mb-8 md:mb-10 max-w-2xl mx-auto px-2">
+        Let's discuss your project and bring your ideas to life.
+      </p>
+      <Link to="/contact" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 border-2 rounded-lg p-3">Contact Me</Link>
+    </div>
+  </div>
+  
+</section>
       </div>
 
       {/* Add these to your index.css */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
-          50% { transform: translateY(-10px) rotate(180deg); opacity: 0.3; }
-        }
-        
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-        
-        .animate-blink {
-          animation: blink 1s infinite;
-        }
-        
-        /* Custom breakpoints for ultra-small screens */
-        @media (max-width: 320px) {
-          .text-3xl {
-            font-size: 1.75rem;
-          }
-          .text-4xl {
-            font-size: 2rem;
-          }
-          .text-5xl {
-            font-size: 2.25rem;
-          }
-          .text-6xl {
-            font-size: 2.5rem;
-          }
-          .text-7xl {
-            font-size: 3rem;
-          }
-        }
-        
-        /* Prevent text overflow */
-        .truncate {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-        
-        /* Ensure content doesn't overflow on small screens */
-        .min-w-0 {
-          min-width: 0;
-        }
-        
-        .flex-shrink-0 {
-          flex-shrink: 0;
-        }
-      `}</style>
+     
+       
     </div>
   );
 }

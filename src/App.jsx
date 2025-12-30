@@ -1,23 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar.jsx';
-import Home from './components/Home/Home.jsx';
-import Services from './components/Services/Services.jsx';
-import Skills from './components/Skills/Skills.jsx';
 import '../public/assets/css/particles.css'
 import './App.css'
-import CursorCircle from './components/Effects/MouseEffect.jsx';
-// import Projects from './pages/Projects';
-// import About from './pages/About';
-// import Contact from './pages/Contact';
-// import Blog from './pages/Blog';
+import AirplaneCursor from './components/Effects/MouseEffect.jsx';
+import Home from './Pages/Home/Home.jsx';
+import Skills from './Pages/Skills/Skills.jsx';
+import Services from './Pages/Services/Services.jsx';
+import About from './Pages/About/About.jsx';
+import Contact from './Pages/Contact/Contact.jsx';
+import Footer from './components/Footer/Footer.jsx';
+import Projects from './Pages/Projects/Projects.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
+        <AirplaneCursor />
       <div className="min-h-screen bg-black">
-        <CursorCircle />
         {/* particles */}
         <div className="light x1"></div>
         <div className="light x2"></div>
@@ -35,13 +37,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/services" element={<Services />} /> 
-          {/* <Route path="/projects" element={<Projects />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/blog" element={<Blog />} />*/}
+          <Route path="/projects" element={<Projects />} />
+          {/* <Route path="/blog" element={<Blog />} />*/}
         </Routes>
         
       </div>
+      <Footer />
       </div>
     </Router>
   );
