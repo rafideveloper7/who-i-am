@@ -35,7 +35,7 @@ function Services() {
         'Code splitting & lazy loading',
         'Testing with Jest & RTL'
       ],
-      price: 'From $2,500',
+      price: 'From $99.9',
       timeline: '2-4 weeks',
       technologies: ['React 18+', 'TypeScript', 'Redux', 'Vite'],
       highlighted: true
@@ -54,7 +54,7 @@ function Services() {
         'Middleware',
         'Image optimization'
       ],
-      price: 'From $3,500',
+      price: 'From $99.9',
       timeline: '3-6 weeks',
       technologies: ['Next.js 14', 'TypeScript', 'Tailwind', 'Prisma'],
       highlighted: true
@@ -92,7 +92,7 @@ function Services() {
         'File upload & processing',
         'WebSocket integration'
       ],
-      price: 'From $3,000',
+      price: 'From $1,500',
       timeline: '3-5 weeks',
       technologies: ['Node.js', 'Express', 'MongoDB', 'PostgreSQL'],
       highlighted: true
@@ -111,7 +111,7 @@ function Services() {
         'User accounts',
         'Admin dashboard'
       ],
-      price: 'From $5,000',
+      price: 'From $500',
       timeline: '4-8 weeks',
       technologies: ['Next.js', 'Stripe', 'Sanity', 'MongoDB'],
       highlighted: false
@@ -149,7 +149,7 @@ function Services() {
         'CSRF protection',
         'Security headers'
       ],
-      price: 'From $2,000',
+      price: 'From $1,500',
       timeline: '2-3 weeks',
       technologies: ['JWT', 'OAuth', 'bcrypt', 'Helmet'],
       highlighted: true
@@ -197,9 +197,9 @@ function Services() {
       <div className="container mx-auto px-4 py-12 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-block mb-4">
+          {/* <div className="inline-block mb-4">
             <span className="text-[#48ff00] font-mono text-sm tracking-wider">$ services --list</span>
-          </div>
+          </div> */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             <span className="text-white">MY </span>
             <span className="text-[#48ff00] relative inline-block">
@@ -237,9 +237,9 @@ function Services() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           {[
-            { value: '50+', label: 'Projects Delivered', color: 'text-[#48ff00]' },
+            { value: '5+', label: 'Projects Delivered', color: 'text-[#48ff00]' },
             { value: '100%', label: 'Client Satisfaction', color: 'text-[#00ff41]' },
-            { value: '30+', label: 'Technologies Used', color: 'text-[#ff00ff]' },
+            { value: '11+', label: 'Technologies Used', color: 'text-[#ff00ff]' },
             { value: '24/7', label: 'Support Available', color: 'text-[#00ffff]' },
           ].map((stat, index) => (
             <div 
@@ -423,7 +423,7 @@ function Services() {
               </Link>
               
               <a
-                href="mailto:hello@rafi.dev"
+                href="mailto:rafieveloper7@gmail.com"
                 className="group px-10 py-4 border-2 border-[#48ff00] text-[#48ff00] font-mono font-bold rounded-lg text-lg hover:bg-[#48ff00] hover:text-black transition-all duration-300 hover:scale-105"
               >
                 <span className="flex items-center justify-center">

@@ -83,12 +83,12 @@ function Footer() {
 
   // Contact info
   const contactInfo = [
-    { icon: faEnvelope, text: "hello@rafi.dev", url: "mailto:hello@rafi.dev" },
-    { icon: faPhone, text: "+1 (555) 123-4567", url: "tel:+15551234567" },
+    { icon: faEnvelope, text: "rafideveloper7@gmail.com", url: "rafideveloper7@gmail.com" },
+    { icon: faPhone, text: "+92 3365091321", url: "tel:+923365091321" },
     {
       icon: faMapMarkerAlt,
-      text: "San Francisco, CA",
-      url: "https://maps.google.com",
+      text: "Kohat - KPK - Pakistan",
+      url: "https://share.google/tUaEnB2P05wA6LbOU",
     },
   ];
 
@@ -257,9 +257,9 @@ function Footer() {
                 Office Hours
               </h4>
               <p className="text-xs text-gray-400 mb-1">
-                Mon-Fri: 9:00 AM - 6:00 PM
+                24/7 available
               </p>
-              <p className="text-xs text-gray-400">Sat: 10:00 AM - 4:00 PM</p>
+              <p className="text-xs text-gray-400">Response time under 24 hours</p>
             </div>
 
             {/* CTA Button */}
@@ -330,7 +330,7 @@ function Footer() {
                   value: "< 24h",
                   color: "text-blue-400",
                 },
-                { label: "Projects", value: "50+", color: "text-purple-400" },
+                { label: "Projects", value: "5+", color: "text-purple-400" },
                 {
                   label: "Happy Clients",
                   value: "100%",

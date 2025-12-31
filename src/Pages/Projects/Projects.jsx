@@ -5,6 +5,11 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 // These are from free-solid-svg-icons
 import { faExternalLinkAlt, faSearch, faFilter, faStar, faEye, faCodeBranch, faCalendar, faArrowRight, faLayerGroup, faRocket, faDesktop, faMobileAlt, faDatabase, faServer } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import projectOne from '../../../public/assets/images/sharknutrition.png';
+import projectTwo from '../../../public/assets/images/portfolio.png';
+import projectThree from '../../../public/assets/images/quiz.png';
+import projectFour from '../../../public/assets/images/zentucky.png';
+import projectFive from '../../../public/assets/images/casio.png';
 
 function Projects() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -16,100 +21,100 @@ function Projects() {
       id: 1,
       title: 'E-Commerce Platform',
       description: 'Full-featured e-commerce platform with React, Node.js, and MongoDB. Includes user authentication, payment processing, and admin dashboard.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop',
+      image: projectOne,
       tags: ['React', 'Node.js', 'MongoDB', 'Stripe', 'Redux'],
       category: 'fullstack',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 245,
-      forks: 89,
+      // github: 'https://github.com',
+      live: 'https://sharknutritionpk.store/',
+      stars: 4,
+      forks: 8,
       featured: true
     },
     {
       id: 2,
       title: 'Portfolio Website',
       description: 'Modern portfolio website with animations and responsive design. Built with Next.js and Tailwind CSS.',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop',
+      image: projectTwo,
       tags: ['Next.js', 'Tailwind', 'Framer Motion', 'TypeScript'],
       category: 'frontend',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 156,
-      forks: 42,
+      github: 'https://github.com/rafideveloper7/who-i-am',
+      live: 'https://rafideveloper7.vercel.app/',
+      stars: 1,
+      forks: 4,
       featured: true
     },
-    {
-      id: 3,
-      title: 'Task Management App',
-      description: 'Collaborative task management application with real-time updates using Socket.io.',
-      image: 'https://images.unsplash.com/photo-1540350394557-8d14678e7f91?w=800&auto=format&fit=crop',
-      tags: ['React', 'Socket.io', 'Express', 'PostgreSQL'],
-      category: 'fullstack',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 189,
-      forks: 67
-    },
+    // {
+    //   id: 3,
+    //   title: 'Task Management App',
+    //   description: 'Collaborative task management application with real-time updates using Socket.io.',
+    //   image: 'https://images.unsplash.com/photo-1540350394557-8d14678e7f91?w=800&auto=format&fit=crop',
+    //   tags: ['React', 'Socket.io', 'Express', 'PostgreSQL'],
+    //   category: 'fullstack',
+    //   github: 'https://github.com',
+    //   live: 'https://demo.com',
+    //   stars: 18,
+    //   forks: 6
+    // },
     {
       id: 4,
-      title: 'Weather Dashboard',
-      description: 'Beautiful weather dashboard with 7-day forecast, location search, and interactive maps.',
-      image: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?w=800&auto=format&fit=crop',
-      tags: ['Vue.js', 'Chart.js', 'Weather API', 'PWA'],
+      title: 'zentucky',
+      description: 'Beautiful restaurant website made for practice purpose.',
+      image: projectFour,
+      tags: ['HTML5', 'CSS3'],
       category: 'frontend',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 98,
-      forks: 31
+      // github: 'https://github.com',
+      // live: 'https://demo.com',
+      stars: 0,
+      forks: 0
     },
     {
       id: 5,
-      title: 'AI Content Generator',
-      description: 'AI-powered content generation tool using OpenAI API with user-friendly interface.',
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
-      tags: ['Next.js', 'OpenAI', 'Tailwind', 'Prisma'],
-      category: 'ai',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 312,
-      forks: 124,
+      title: 'Quiz WebApplication',
+      description: 'Quiz Web App with user-friendly interface.',
+      image: projectThree,
+      tags: ['React.js', 'JavaScript', 'Tailwind'],
+      category: 'frontend',
+      github: 'https://github.com/rafideveloper7/javascripttasks/tree/master/FourtyOneDayChallenge/day-06',
+      live: 'https://raficodevault.vercel.app/FourtyOneDayChallenge/day-06/index.html',
+      stars: 2,
+      forks: 4,
       featured: true
     },
-    {
-      id: 6,
-      title: 'Fitness Tracker',
-      description: 'Mobile-first fitness tracking app with workout plans, progress charts, and social features.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop',
-      tags: ['React Native', 'Firebase', 'Recharts', 'PWA'],
-      category: 'mobile',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 178,
-      forks: 56
-    },
-    {
-      id: 7,
-      title: 'Real Estate Platform',
-      description: 'Property listing platform with advanced filters, virtual tours, and agent management.',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop',
-      tags: ['React', 'Mapbox', 'Node.js', 'MySQL', 'AWS'],
-      category: 'fullstack',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 267,
-      forks: 94
-    },
+    // {
+    //   id: 6,
+    //   title: 'Fitness Tracker',
+    //   description: 'Mobile-first fitness tracking app with workout plans, progress charts, and social features.',
+    //   image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop',
+    //   tags: ['React Native', 'Firebase', 'Recharts', 'PWA'],
+    //   category: 'mobile',
+    //   github: 'https://github.com',
+    //   live: 'https://demo.com',
+    //   stars: 8,
+    //   forks: 5
+    // },
+    // {
+    //   id: 7,
+    //   title: 'Real Estate Platform',
+    //   description: 'Property listing platform with advanced filters, virtual tours, and agent management.',
+    //   image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop',
+    //   tags: ['HTML5', 'CSS3', 'Bootstrap', 'JavaScript'],
+    //   category: 'frontend',
+    //   github: 'https://github.com',
+    //   live: 'https://demo.com',
+    //   stars: 7,
+    //   forks: 4
+    // },
     {
       id: 8,
-      title: 'Crypto Dashboard',
-      description: 'Cryptocurrency portfolio tracker with real-time price updates and trading signals.',
-      image: 'https://images.unsplash.com/photo-1620336655055-bd87c9dae2b0?w=800&auto=format&fit=crop',
-      tags: ['React', 'WebSocket', 'Chart.js', 'Crypto API'],
+      title: 'Casio Watches Web',
+      description: 'Creating a Casio watch store website for practice purpose',
+      image: projectFive,
+      tags: ['React', 'JavaScript', 'Tailwindcss', 'API'],
       category: 'frontend',
-      github: 'https://github.com',
-      live: 'https://demo.com',
-      stars: 201,
-      forks: 78
+      github: 'https://github.com/rafideveloper7/first-hackathon-project-01',
+      live: 'https://first-hackathon-project-01-78pc.vercel.app/',
+      stars: 1,
+      forks: 3
     },
   ];
 
