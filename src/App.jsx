@@ -13,6 +13,8 @@ import Footer from './components/Footer/Footer.jsx';
 import Projects from './Pages/Projects/Projects.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
 
+import { Analytics } from '@vercel/analytics/react';
+
 
 function App() {
   return (
@@ -46,6 +48,7 @@ function App() {
       </div>
       <Footer />
       </div>
+      <Analytics />
     </Router>
   );
 }
