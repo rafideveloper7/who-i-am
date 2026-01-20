@@ -1,194 +1,239 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import supabase from "../../lib/supabase.js"; // Remove the curly braces
 
 function Contact() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    subject: '',
-    message: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState(""); // 'success' or 'error'
 
-  // Hardcoded EmailJS Configuration - CORRECT KEYS
-  const EMAILJS_PUBLIC_KEY = 'Ycd6NamkeQ3Csi8L9';
-  const EMAILJS_SERVICE_ID = 'service_6qt36r8';
-  const EMAILJS_TEMPLATE_ID = 'template_mm5ryxe';
+  // Show popup notification
+  const showNotification = (message, type) => {
+    setPopupMessage(message);
+    setPopupType(type);
+    setShowPopup(true);
 
-  // Initialize EmailJS
-  useEffect(() => {
-    console.log('📧 Initializing EmailJS with keys:', {
-      publicKey: EMAILJS_PUBLIC_KEY ? '✓ Set' : '✗ Missing',
-      serviceId: EMAILJS_SERVICE_ID ? '✓ Set' : '✗ Missing',
-      templateId: EMAILJS_TEMPLATE_ID ? '✓ Set' : '✗ Missing'
-    });
-
-    // Load EmailJS script
-    const loadEmailJS = () => {
-      return new Promise((resolve, reject) => {
-        // Check if already loaded
-        if (window.emailjs) {
-          console.log('✅ EmailJS already loaded');
-          resolve();
-          return;
-        }
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-        script.async = true;
-        
-        script.onload = () => {
-          if (window.emailjs) {
-            // Initialize with your public key
-            window.emailjs.init(EMAILJS_PUBLIC_KEY)
-              .then(() => {
-                console.log('✅ EmailJS initialized successfully');
-                resolve();
-              })
-              .catch(err => {
-                console.error('❌ Failed to initialize EmailJS:', err);
-                reject(err);
-              });
-          } else {
-            reject(new Error('EmailJS not loaded'));
-          }
-        };
-        
-        script.onerror = (err) => {
-          console.error('❌ Failed to load EmailJS script:', err);
-          reject(err);
-        };
-        
-        document.head.appendChild(script);
-      });
-    };
-
-    loadEmailJS().catch(err => {
-      console.error('Error loading EmailJS:', err);
-      setError('Email service failed to load. Please refresh the page.');
-    });
-
-  }, []);
+    const hideTime = type === "success" ? 5000 : 7000;
+    setTimeout(() => {
+      setShowPopup(false);
+    }, hideTime);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess(false);
+    setShowPopup(false);
 
     // Basic validation
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
-      setError('Please fill in all required fields');
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.message
+    ) {
+      showNotification("Please fill in all required fields", "error");
       setLoading(false);
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setError('Please enter a valid email address');
+      showNotification("Please enter a valid email address", "error");
       setLoading(false);
       return;
     }
 
     try {
-      console.log('🚀 Sending email...');
-      
-      // Prepare template parameters
-      const templateParams = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        from_email: formData.email,
-        from_name: `${formData.firstName} ${formData.lastName}`,
-        subject: formData.subject || 'New Project Inquiry',
+      console.log("🚀 Saving to Supabase...");
+      // console.log("🔗 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+
+      // Prepare data for Supabase
+      const submissionData = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        subject: formData.subject || "New Project Inquiry",
         message: formData.message,
-        reply_to: formData.email,
-        to_email: 'rafideveloper7@gmail.com',
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
+        status: "unread",
       };
 
-      console.log('📋 Template parameters:', templateParams);
+      // console.log("📋 Data being sent to Supabase:", submissionData);
 
-      // Check if EmailJS is loaded
-      if (!window.emailjs) {
-        throw new Error('Email service is not ready. Please wait a moment and try again.');
+      // Save to Supabase - DON'T include created_at, Supabase will handle it automatically
+      const { data, error } = await supabase
+        .from("contact_submissions")
+        .insert([submissionData])
+        .select();
+
+      if (error) {
+        // console.error("❌ Supabase error:", error);
+        // console.error("❌ Error code:", error.code);
+        // console.error("❌ Error message:", error.message);
+        throw error;
       }
 
-      // Send email using EmailJS
-      const response = await window.emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        templateParams
+      console.log("✅ Data saved to Supabase successfully! Response:", data);
+
+      // Show success popup
+      showNotification(
+        "✅ Message sent successfully! I will get back to you soon.",
+        "success",
       );
 
-      console.log('✅ Email sent successfully! Response:', response);
-
-      if (response.status === 200) {
-        setSuccess(true);
-        // Reset form
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setSuccess(false);
-        }, 5000);
-      } else {
-        throw new Error('Failed to send email');
-      }
-    } catch (err) {
-      console.error('❌ Error details:', {
-        message: err.message,
-        text: err.text,
-        status: err.status,
-        fullError: err
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        subject: "",
+        message: "",
       });
-      
-      let errorMessage = 'Failed to send message. ';
-      
-      // User-friendly error messages
-      if (err.message.includes('not ready')) {
-        errorMessage = 'Email service is loading. Please try again in a few seconds.';
-      } else if (err.message.includes('service') || err.text?.includes('service')) {
-        errorMessage = 'Email service configuration issue. Please contact me directly at rafideveloper7@gmail.com';
-      } else if (err.message.includes('template') || err.text?.includes('template')) {
-        errorMessage = 'Email template issue. Please contact me directly at rafideveloper7@gmail.com';
-      } else if (err.text) {
-        try {
-          const errorData = JSON.parse(err.text);
-          errorMessage += errorData.error || err.text;
-        } catch {
-          errorMessage += 'Please try again.';
-        }
+    } catch (err) {
+      console.error("❌ Error details:", {
+        message: err.message,
+        code: err.code,
+        details: err.details,
+        hint: err.hint,
+        fullError: err,
+      });
+
+      // Test Supabase connection
+      console.log("🔍 Testing Supabase connection...");
+
+      let errorMessage = "Failed to send message. ";
+
+      // Handle specific Supabase errors
+      if (err.message?.includes("network") || err.message?.includes("fetch")) {
+        errorMessage =
+          "Network error. Please check your internet connection and try again.";
+      } else if (err.code === "PGRST301") {
+        errorMessage = "Database connection issue. Please try again later.";
+      } else if (err.code === "42501") {
+        errorMessage =
+          "Permission denied. Please contact me directly at rafideveloper7@gmail.com";
       } else if (err.message) {
         errorMessage += err.message;
       } else {
-        errorMessage += 'Please try again or contact me directly at rafideveloper7@gmail.com';
+        errorMessage +=
+          "Please try again or contact me directly at rafideveloper7@gmail.com";
       }
-      
-      setError(errorMessage);
+
+      showNotification(`❌ ${errorMessage}`, "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="m-auto">
+    <div className="m-auto relative">
+      {/* Popup Notification */}
+      {showPopup && (
+        <div
+          className={`fixed top-5 right-5 z-50 max-w-sm animate-fadeIn ${popupType === "success" ? "animate-slideInRight" : "animate-shake"}`}
+        >
+          <div
+            className={`rounded-lg p-4 shadow-lg border transform transition-all duration-300 ${
+              popupType === "success"
+                ? "bg-gradient-to-r from-green-500/10 to-green-600/10 border-green-500/30 backdrop-blur-sm"
+                : "bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30 backdrop-blur-sm"
+            }`}
+          >
+            <div className="flex items-center">
+              <div
+                className={`flex-shrink-0 mr-3 ${popupType === "success" ? "text-green-500" : "text-red-500"}`}
+              >
+                {popupType === "success" ? (
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <p
+                  className={`text-sm font-medium ${popupType === "success" ? "text-green-400" : "text-red-400"}`}
+                >
+                  {popupMessage}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowPopup(false)}
+                className="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Additional contact info for errors */}
+            {popupType === "error" && popupMessage.includes("contact") && (
+              <div className="mt-2 pt-2 border-t border-red-500/20">
+                <p className="text-xs text-gray-300">
+                  📧{" "}
+                  <a
+                    href="mailto:rafideveloper7@gmail.com"
+                    className="text-[#48ff00] hover:underline"
+                  >
+                    rafideveloper7@gmail.com
+                  </a>
+                </p>
+                <p className="text-xs text-gray-300 mt-1">
+                  📱{" "}
+                  <a
+                    href="https://wa.me/923365091321"
+                    className="text-[#48ff00] hover:underline"
+                  >
+                    +92 336-5091321
+                  </a>
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="p-5 m-auto">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
@@ -199,29 +244,6 @@ function Contact() {
             I'll get back to you as soon as possible.
           </p>
         </div>
-
-        {/* Success/Error Messages */}
-        {success && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              <span className="text-green-500 font-medium">✅ Message sent successfully! I'll get back to you soon.</span>
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <span className="text-red-500 font-medium">{error}</span>
-            </div>
-          </div>
-        )}
 
         <div className="bg-inherit m-auto">
           {/* Contact Form */}
@@ -315,24 +337,40 @@ function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full sm:w-auto bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 px-8 rounded-lg transition-all duration-300 transform ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]'}`}
+                  className={`w-full sm:w-auto bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 px-8 rounded-lg transition-all duration-300 transform ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"}`}
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Sending...
                     </div>
                   ) : (
-                    'Send Message'
+                    "Send Message"
                   )}
                 </button>
               </form>
             </div>
-            
-            {/* Rest of your existing contact info code */}
+
+            {/* Rest of your contact info code remains here */}
             <div className="space-y-8 p-5 lg:w-[48%] w-full">
               {/* Contact Information */}
               <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-6 sm:p-8">
@@ -472,7 +510,7 @@ function Contact() {
                 </div>
               </div>
             </div>
-            
+
             {/* Office Hours */}
             <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl sm:p-8 p-5 w-full lg:w-[30vw] inline-block">
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
@@ -484,7 +522,7 @@ function Contact() {
                   { day: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
                   { day: "Saturday", time: "10:00 AM - 4:00 PM" },
                   { day: "Sunday", time: "Closed" },
-                  { day: "WhatsApp (+92-3365091321)", time: "available" }
+                  { day: "WhatsApp (+92-3365091321)", time: "available" },
                 ].map((schedule) => (
                   <div
                     key={schedule.day}
@@ -514,9 +552,13 @@ function Contact() {
                 </p>
               </div>
               <div className="p-5">
-                <h1 className="text-white-500 text-xl border-l-4 p-2 border-[#48ff00]">Book a Free Meeting!</h1>
+                <h1 className="text-white-500 text-xl border-l-4 p-2 border-[#48ff00]">
+                  Book a Free Meeting!
+                </h1>
                 <h3 className="p-5">Available 🟢 WhatsApp (+92-3365091321)</h3>
-                <p className="text-[#48ff00]">Discuss Your Project - let me understand your target ...</p>
+                <p className="text-[#48ff00]">
+                  Discuss Your Project - let me understand your target ...
+                </p>
               </div>
             </div>
           </div>
