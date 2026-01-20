@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, HashRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar.jsx';
 import '../public/assets/css/particles.css'
 import './App.css'
@@ -18,7 +18,6 @@ import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
-    <HashRouter>
     <Router>
       <ScrollToTop />
         <AirplaneCursor />
@@ -51,7 +50,6 @@ function App() {
       </div>
       <Analytics />
     </Router>
-    </HashRouter>
   );
 }
 
