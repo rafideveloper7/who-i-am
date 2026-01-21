@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import cv from '../../../public/assets/CV/rafideveloper7.pdf'
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +20,8 @@ function Navbar() {
   const externalLinks = [
     { name: 'Github', url: 'https://github.com/rafideveloper7', icon: '⟨/⟩' },
     { name: 'LinkedIn', url: 'https://www.linkedin.com/in/rafideveloper7', icon: '⧉' },
-    { name: 'Resume', url: 'https://drive.google.com/file/d/1resChrUA7Sb7G8GGc7l2-e0rXb71_1pY/view?usp=drive_link', icon: '📃' },
+    { name: 'Resume', url: cv, icon: '📃' },
+    // { name: 'Resume', url: 'https://drive.google.com/file/d/1resChrUA7Sb7G8GGc7l2-e0rXb71_1pY/view?usp=drive_link', icon: '📃' },
   ];
 
   return (

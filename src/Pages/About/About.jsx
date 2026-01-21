@@ -36,6 +36,8 @@ import {
   faPython,
 } from "@fortawesome/free-brands-svg-icons";
 
+import cv from '../../../public/assets/CV/rafideveloper7.pdf'
+
 function About() {
   const [activeTab, setActiveTab] = useState("personal");
 
@@ -235,14 +237,16 @@ function About() {
               </div>
 
               {/* Download CV Button */}
-              <Link
-                to="https://drive.google.com/file/d/1resChrUA7Sb7G8GGc7l2-e0rXb71_1pY/view?usp=drive_link"
+              <a
+                download="rafiullah-resume.pdf"
+                // to="https://drive.google.com/file/d/1resChrUA7Sb7G8GGc7l2-e0rXb71_1pY/view?usp=drive_link"
+                href={cv}
                 target="blank"
                 className="w-full py-3 bg-gradient-to-r from-[#48ff00] to-[#00ff41] text-black font-mono font-bold rounded-lg hover:shadow-[0_0_20px_rgba(72,255,0,0.5)] transition-all duration-300 flex items-center justify-center"
               >
                 <FontAwesomeIcon icon={faDownload} className="mr-2" />
                 DOWNLOAD CV
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -541,7 +545,6 @@ function About() {
                   title: "Senior Developer (Freelance)",
                   desc: "Lead Remote MERN Stack team.",
                 },
-
               ].map((item, index) => (
                 <div
                   key={index}
