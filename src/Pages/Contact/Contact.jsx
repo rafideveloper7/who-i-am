@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import supabase from "../../lib/supabase.js"; // Remove the curly braces
+import supabase from "../../lib/supabase.js";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -13,7 +13,7 @@ function Contact() {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-  const [popupType, setPopupType] = useState(""); // 'success' or 'error'
+  const [popupType, setPopupType] = useState("");
 
   // Show popup notification
   const showNotification = (message, type) => {
@@ -40,7 +40,6 @@ function Contact() {
     setLoading(true);
     setShowPopup(false);
 
-    // Basic validation
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -59,10 +58,6 @@ function Contact() {
     }
 
     try {
-      console.log("🚀 Saving to Supabase...");
-      // console.log("🔗 Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-
-      // Prepare data for Supabase
       const submissionData = {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
@@ -71,30 +66,18 @@ function Contact() {
         status: "unread",
       };
 
-      // console.log("📋 Data being sent to Supabase:", submissionData);
-
-      // Save to Supabase - DON'T include created_at, Supabase will handle it automatically
       const { data, error } = await supabase
         .from("contact_submissions")
         .insert([submissionData])
         .select();
 
-      if (error) {
-        // console.error("❌ Supabase error:", error);
-        // console.error("❌ Error code:", error.code);
-        // console.error("❌ Error message:", error.message);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log("✅ Data saved to Supabase successfully! Response:", data);
-
-      // Show success popup
       showNotification(
         "✅ Message sent successfully! I will get back to you soon.",
-        "success",
+        "success"
       );
 
-      // Reset form
       setFormData({
         firstName: "",
         lastName: "",
@@ -103,20 +86,8 @@ function Contact() {
         message: "",
       });
     } catch (err) {
-      console.error("❌ Error details:", {
-        message: err.message,
-        code: err.code,
-        details: err.details,
-        hint: err.hint,
-        fullError: err,
-      });
-
-      // Test Supabase connection
-      console.log("🔍 Testing Supabase connection...");
-
       let errorMessage = "Failed to send message. ";
 
-      // Handle specific Supabase errors
       if (err.message?.includes("network") || err.message?.includes("fetch")) {
         errorMessage =
           "Network error. Please check your internet connection and try again.";
@@ -139,29 +110,25 @@ function Contact() {
   };
 
   return (
-    <div className="m-auto relative">
+    <div className="min-h-screen w-full">
       {/* Popup Notification */}
       {showPopup && (
         <div
-          className={`fixed top-5 right-5 z-50 max-w-sm animate-fadeIn ${popupType === "success" ? "animate-slideInRight" : "animate-shake"}`}
+          className={`fixed top-4 right-4 left-4 z-50 mx-auto animate-fadeIn ${popupType === "success" ? "animate-slideInRight" : "animate-shake"} md:left-auto md:right-4 md:w-auto md:max-w-sm`}
         >
           <div
-            className={`rounded-lg p-4 shadow-lg border transform transition-all duration-300 ${
+            className={`rounded-lg p-4 shadow-lg border backdrop-blur-sm ${
               popupType === "success"
-                ? "bg-gradient-to-r from-green-500/10 to-green-600/10 border-green-500/30 backdrop-blur-sm"
-                : "bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30 backdrop-blur-sm"
+                ? "bg-gradient-to-r from-green-500/10 to-green-600/10 border-green-500/30"
+                : "bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30"
             }`}
           >
-            <div className="flex items-center">
+            <div className="flex items-start">
               <div
-                className={`flex-shrink-0 mr-3 ${popupType === "success" ? "text-green-500" : "text-red-500"}`}
+                className={`flex-shrink-0 mr-3 mt-0.5 ${popupType === "success" ? "text-green-500" : "text-red-500"}`}
               >
                 {popupType === "success" ? (
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -169,11 +136,7 @@ function Contact() {
                     />
                   </svg>
                 ) : (
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -188,16 +151,34 @@ function Contact() {
                 >
                   {popupMessage}
                 </p>
+                {popupType === "error" && popupMessage.includes("contact") && (
+                  <div className="mt-2 pt-2 border-t border-red-500/20">
+                    <p className="text-xs text-gray-300">
+                      📧{" "}
+                      <a
+                        href="mailto:rafideveloper7@gmail.com"
+                        className="text-[#48ff00] hover:underline"
+                      >
+                        rafideveloper7@gmail.com
+                      </a>
+                    </p>
+                    <p className="text-xs text-gray-300 mt-1">
+                      📱{" "}
+                      <a
+                        href="https://wa.me/923365091321"
+                        className="text-[#48ff00] hover:underline"
+                      >
+                        +92 336-5091321
+                      </a>
+                    </p>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setShowPopup(false)}
-                className="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-300 transition-colors"
+                className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-300 transition-colors"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -206,55 +187,34 @@ function Contact() {
                 </svg>
               </button>
             </div>
-
-            {/* Additional contact info for errors */}
-            {popupType === "error" && popupMessage.includes("contact") && (
-              <div className="mt-2 pt-2 border-t border-red-500/20">
-                <p className="text-xs text-gray-300">
-                  📧{" "}
-                  <a
-                    href="mailto:rafideveloper7@gmail.com"
-                    className="text-[#48ff00] hover:underline"
-                  >
-                    rafideveloper7@gmail.com
-                  </a>
-                </p>
-                <p className="text-xs text-gray-300 mt-1">
-                  📱{" "}
-                  <a
-                    href="https://wa.me/923365091321"
-                    className="text-[#48ff00] hover:underline"
-                  >
-                    +92 336-5091321
-                  </a>
-                </p>
-              </div>
-            )}
           </div>
         </div>
       )}
 
-      <div className="p-5 m-auto">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        {/* Header Section */}
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 sm:mb-4">
             Get In <span className="text-[#48ff00]">Touch</span>
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl lg:max-w-3xl mx-auto px-4">
             Have a project in mind? Let's collaborate! Send me a message and
             I'll get back to you as soon as possible.
           </p>
         </div>
 
-        <div className="bg-inherit m-auto">
-          {/* Contact Form */}
-          <div className="m-auto p-5 w-full flex flex-wrap">
-            <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-6 sm:p-8 m-5 order-1 w-full">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          {/* Contact Form - Takes 7 columns on large screens */}
+          <div className="lg:col-span-7 xl:col-span-8">
+            <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-5 sm:p-6 lg:p-8 h-full">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-6">
                 Send Message
               </h3>
 
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
+                {/* Name Fields - Stack on mobile, side by side on larger screens */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       First Name *
@@ -264,7 +224,7 @@ function Contact() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all"
+                      className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all text-sm sm:text-base"
                       placeholder="John"
                       required
                       disabled={loading}
@@ -279,7 +239,7 @@ function Contact() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all"
+                      className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all text-sm sm:text-base"
                       placeholder="Doe"
                       required
                       disabled={loading}
@@ -287,6 +247,7 @@ function Contact() {
                   </div>
                 </div>
 
+                {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Email Address *
@@ -296,13 +257,14 @@ function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all"
+                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all text-sm sm:text-base"
                     placeholder="john@example.com"
                     required
                     disabled={loading}
                   />
                 </div>
 
+                {/* Subject */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Subject
@@ -312,12 +274,13 @@ function Contact() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all"
+                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all text-sm sm:text-base"
                     placeholder="Project Inquiry"
                     disabled={loading}
                   />
                 </div>
 
+                {/* Message */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Message *
@@ -327,17 +290,18 @@ function Contact() {
                     value={formData.message}
                     onChange={handleChange}
                     rows="5"
-                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all resize-none"
+                    className="w-full bg-black/50 border border-[#48ff00]/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#48ff00]/50 focus:border-transparent transition-all resize-none text-sm sm:text-base"
                     placeholder="Tell me about your project..."
                     required
                     disabled={loading}
                   ></textarea>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full sm:w-auto bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 px-8 rounded-lg transition-all duration-300 transform ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"}`}
+                  className={`w-full bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-300 transform text-sm sm:text-base ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"}`}
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
@@ -369,104 +333,93 @@ function Contact() {
                 </button>
               </form>
             </div>
+          </div>
 
-            {/* Rest of your contact info code remains here */}
-            <div className="space-y-8 p-5 lg:w-[48%] w-full">
+          {/* Right Column - Contact Info & Hours - Takes 5 columns on large screens */}
+          <div className="lg:col-span-5 xl:col-span-4">
+            <div className="space-y-6 lg:space-y-8 h-full flex flex-col">
               {/* Contact Information */}
-              <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-6 sm:p-8">
+              <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-5 sm:p-6 lg:p-8 flex-1">
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
                   Contact Information
                 </h3>
 
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-[#48ff00]/10 p-3 rounded-lg">
-                      <svg
-                        className="w-6 h-6 text-[#48ff00]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                <div className="space-y-5 sm:space-y-6">
+                  {[
+                    {
+                      icon: (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                         />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Email</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">
-                        rafideveloper7@gmail.com
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-[#48ff00]/10 p-3 rounded-lg">
-                      <svg
-                        className="w-6 h-6 text-[#48ff00]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                      ),
+                      title: "Email",
+                      content: "rafideveloper7@gmail.com",
+                    },
+                    {
+                      icon: (
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                         />
-                      </svg>
+                      ),
+                      title: "Phone",
+                      content: "+92 336-5091321",
+                    },
+                    {
+                      icon: (
+                        <>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </>
+                      ),
+                      title: "Location",
+                      content: "Kohat, KPK, Pakistan",
+                    },
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-start space-x-4">
+                      <div className="bg-[#48ff00]/10 p-3 rounded-lg flex-shrink-0">
+                        <svg
+                          className="w-5 h-5 sm:w-6 sm:h-6 text-[#48ff00]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          {item.icon}
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-white text-sm sm:text-base">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-400 text-xs sm:text-sm mt-1 break-words">
+                          {item.content}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Phone</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">
-                        +92 336-5091321
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-[#48ff00]/10 p-3 rounded-lg">
-                      <svg
-                        className="w-6 h-6 text-[#48ff00]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Location</h4>
-                      <p className="text-gray-400 text-sm sm:text-base">
-                        Kohat, KPK
-                      </p>
-                      <p className="text-gray-400 text-sm sm:text-base">
-                        Pakistan
-                      </p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
                 {/* Social Links */}
-                <div className="mt-8 pt-8 border-t border-[#48ff00]/20">
-                  <h4 className="font-semibold text-white mb-4">
+                <div className="mt-8 pt-6 border-t border-[#48ff00]/20">
+                  <h4 className="font-semibold text-white mb-4 text-sm sm:text-base">
                     Connect with me
                   </h4>
-                  <div className="flex space-x-4">
+                  <div className="flex flex-wrap gap-3">
                     {[
                       {
                         name: "LinkedIn",
@@ -494,11 +447,11 @@ function Contact() {
                         href={social.path}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-black/50 border border-[#48ff00]/20 rounded-lg p-3 hover:bg-[#48ff00]/10 hover:border-[#48ff00]/40 transition-all duration-300"
+                        className="bg-black/50 border border-[#48ff00]/20 rounded-lg p-2.5 sm:p-3 hover:bg-[#48ff00]/10 hover:border-[#48ff00]/40 transition-all duration-300"
                         aria-label={social.name}
                       >
                         <svg
-                          className="w-5 h-5 text-[#48ff00]"
+                          className="w-4 h-4 sm:w-5 sm:h-5 text-[#48ff00]"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -509,56 +462,64 @@ function Contact() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Office Hours */}
-            <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl sm:p-8 p-5 w-full lg:w-[30vw] inline-block">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
-                Office Hours
-              </h3>
+              {/* Office Hours */}
+              <div className="bg-black/40 border border-[#48ff00]/20 rounded-2xl p-5 sm:p-6 lg:p-8 flex-1">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
+                  Office Hours
+                </h3>
 
-              <div className="space-y-4">
-                {[
-                  { day: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
-                  { day: "Saturday", time: "10:00 AM - 4:00 PM" },
-                  { day: "Sunday", time: "Closed" },
-                  { day: "WhatsApp (+92-3365091321)", time: "available" },
-                ].map((schedule) => (
-                  <div
-                    key={schedule.day}
-                    className="flex justify-between items-center py-3 border-b border-[#48ff00]/10 last:border-0"
-                  >
-                    <span className="text-gray-300 font-medium">
-                      {schedule.day}
-                    </span>
-                    <span
-                      className={`font-semibold ${
-                        schedule.day === "Sunday"
-                          ? "text-red-400"
-                          : "text-[#48ff00]"
-                      }`}
+                <div className="space-y-3 sm:space-y-4">
+                  {[
+                    { day: "Monday - Friday", time: "9:00 AM - 6:00 PM" },
+                    { day: "Saturday", time: "10:00 AM - 4:00 PM" },
+                    { day: "Sunday", time: "Closed" },
+                    { day: "WhatsApp (+92-3365091321)", time: "Available" },
+                  ].map((schedule) => (
+                    <div
+                      key={schedule.day}
+                      className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 sm:py-3 border-b border-[#48ff00]/10 last:border-0"
                     >
-                      {schedule.time}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                      <span className="text-gray-300 font-medium text-sm sm:text-base mb-1 sm:mb-0">
+                        {schedule.day}
+                      </span>
+                      <span
+                        className={`font-semibold text-xs sm:text-sm ${
+                          schedule.day === "Sunday"
+                            ? "text-red-400"
+                            : schedule.time === "Available"
+                            ? "text-green-400"
+                            : "text-[#48ff00]"
+                        }`}
+                      >
+                        {schedule.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
 
-              <div className="mt-6 p-4 bg-[#48ff00]/10 border border-[#48ff00]/20 rounded-lg">
-                <p className="text-sm text-gray-300">
-                  <span className="text-[#48ff00] font-semibold">Note:</span>{" "}
-                  Response time is typically within 24 hours during business
-                  days.
-                </p>
-              </div>
-              <div className="p-5">
-                <h1 className="text-white-500 text-xl border-l-4 p-2 border-[#48ff00]">
-                  Book a Free Meeting!
-                </h1>
-                <h3 className="p-5">Available 🟢 WhatsApp (+92-3365091321)</h3>
-                <p className="text-[#48ff00]">
-                  Discuss Your Project - let me understand your target ...
-                </p>
+                <div className="mt-6 p-3 sm:p-4 bg-[#48ff00]/10 border border-[#48ff00]/20 rounded-lg">
+                  <p className="text-xs sm:text-sm text-gray-300">
+                    <span className="text-[#48ff00] font-semibold">Note:</span>{" "}
+                    Response time is typically within 24 hours during business
+                    days.
+                  </p>
+                </div>
+
+                <div className="mt-6 p-3 sm:p-4">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <h1 className="text-white text-lg sm:text-xl font-semibold border-l-4 pl-3 border-[#48ff00]">
+                      Book a Free Meeting!
+                    </h1>
+                  </div>
+                  <h3 className="text-gray-300 text-sm sm:text-base mb-2 p-2">
+                    Available 🟢 WhatsApp (+92-3365091321)
+                  </h3>
+                  <p className="text-[#48ff00] text-sm sm:text-base">
+                    Discuss Your Project - let me understand your target ...
+                  </p>
+                </div>
               </div>
             </div>
           </div>

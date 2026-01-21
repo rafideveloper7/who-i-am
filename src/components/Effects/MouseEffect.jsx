@@ -10,7 +10,7 @@ function AirplaneCursor() {
   const smokeTrailRef = useRef(null);
   const lastPositionRef = useRef({ x: 0, y: 0 });
   const smokeIdRef = useRef(0);
-  const lastSmokeTimeRef = useRef(0);
+  // const lastSmokeTimeRef = useRef(0);
   const animationFrameRef = useRef(null);
   const smokeIntervalRef = useRef(null);
 
