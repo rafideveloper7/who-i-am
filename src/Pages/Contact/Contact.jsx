@@ -35,11 +35,57 @@ function Contact() {
     }));
   };
 
+  // Function to send email via FormSubmit.co
+  const sendEmailNotification = async (submissionData) => {
+    try {
+      const emailPayload = {
+        name: submissionData.name,
+        email: submissionData.email,
+        subject: submissionData.subject || "New Project Inquiry",
+        message: submissionData.message,
+        _replyto: submissionData.email,
+        _subject: `New Contact Form Submission: ${submissionData.name}`,
+        _template: "table",
+        _captcha: "false",
+        timestamp: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Karachi",
+          dateStyle: "full",
+          timeStyle: "long",
+        }),
+      };
+
+      // Send email to your address
+      const response = await fetch(
+        "https://formsubmit.co/ajax/rafideveloper7@gmail.com",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(emailPayload),
+        }
+      );
+
+      const result = await response.json();
+      
+      if (!result.success) {
+        console.warn("FormSubmit email failed:", result);
+      }
+      
+      return result.success;
+    } catch (error) {
+      console.error("Email sending error:", error);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setShowPopup(false);
 
+    // Validation
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -66,6 +112,7 @@ function Contact() {
         status: "unread",
       };
 
+      // 1. First, save to Supabase (your database)
       const { data, error } = await supabase
         .from("contact_submissions")
         .insert([submissionData])
@@ -73,11 +120,18 @@ function Contact() {
 
       if (error) throw error;
 
+      // 2. Then send email notification via FormSubmit.co (in background)
+      sendEmailNotification(submissionData).then((emailSuccess) => {
+        console.log("Email success:", emailSuccess);
+      });
+
+      // 3. Show success message to user
       showNotification(
         "✅ Message sent successfully! I will get back to you soon.",
         "success"
       );
 
+      // 4. Reset form
       setFormData({
         firstName: "",
         lastName: "",
@@ -97,7 +151,13 @@ function Contact() {
         errorMessage =
           "Permission denied. Please contact me directly at rafideveloper7@gmail.com";
       } else if (err.message) {
-        errorMessage += err.message;
+        // Check if it's the column error
+        if (err.message.includes("column")) {
+          // Remove submitted_at from data if that's causing error
+          errorMessage = "Database error. Please try a simpler message.";
+        } else {
+          errorMessage += err.message;
+        }
       } else {
         errorMessage +=
           "Please try again or contact me directly at rafideveloper7@gmail.com";
@@ -114,7 +174,9 @@ function Contact() {
       {/* Popup Notification */}
       {showPopup && (
         <div
-          className={`fixed top-4 right-4 left-4 z-50 mx-auto animate-fadeIn ${popupType === "success" ? "animate-slideInRight" : "animate-shake"} md:left-auto md:right-4 md:w-auto md:max-w-sm`}
+          className={`fixed top-4 right-4 left-4 z-50 mx-auto animate-fadeIn ${
+            popupType === "success" ? "animate-slideInRight" : "animate-shake"
+          } md:left-auto md:right-4 md:w-auto md:max-w-sm`}
         >
           <div
             className={`rounded-lg p-4 shadow-lg border backdrop-blur-sm ${
@@ -125,10 +187,16 @@ function Contact() {
           >
             <div className="flex items-start">
               <div
-                className={`flex-shrink-0 mr-3 mt-0.5 ${popupType === "success" ? "text-green-500" : "text-red-500"}`}
+                className={`flex-shrink-0 mr-3 mt-0.5 ${
+                  popupType === "success" ? "text-green-500" : "text-red-500"
+                }`}
               >
                 {popupType === "success" ? (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -136,7 +204,11 @@ function Contact() {
                     />
                   </svg>
                 ) : (
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -147,7 +219,11 @@ function Contact() {
               </div>
               <div className="flex-1">
                 <p
-                  className={`text-sm font-medium ${popupType === "success" ? "text-green-400" : "text-red-400"}`}
+                  className={`text-sm font-medium ${
+                    popupType === "success"
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
                 >
                   {popupMessage}
                 </p>
@@ -178,7 +254,11 @@ function Contact() {
                 onClick={() => setShowPopup(false)}
                 className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-300 transition-colors"
               >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -301,7 +381,11 @@ function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-300 transform text-sm sm:text-base ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"}`}
+                  className={`w-full bg-gradient-to-r from-[#48ff00] to-[#00ff88] text-black font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-300 transform text-sm sm:text-base ${
+                    loading
+                      ? "opacity-70 cursor-not-allowed"
+                      : "hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
+                  }`}
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
